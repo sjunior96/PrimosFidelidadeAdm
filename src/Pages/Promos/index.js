@@ -51,10 +51,10 @@ export default function Promos() {
     async function deletePromo(promoUID) {
         await firebase.database().ref('promos').child(promoUID).remove()
             .then((success) => {
-                showToastWithGravity("Promoção excluída com sucesso!");
+                showToastWithGravity("Serviço excluído com sucesso!");
             })
             .catch((error) => {
-                alert("Erro ao deletar promoção: " + JSON.stringify(error));
+                alert("Erro ao deletar serviço: " + JSON.stringify(error));
             });
         getPromos();
     }
@@ -92,10 +92,10 @@ export default function Promos() {
                     value: parseFloat(childItem.val().value).toFixed(2),
                     description: childItem.val().description,
                     promoStatus: childItem.val().promoStatus
-                }
+                };
                 setPromos(oldArray => [...oldArray, list]);
-            })
-        })
+            });
+        });
     }
 
     async function savePromo() {
@@ -107,7 +107,7 @@ export default function Promos() {
                 description: description,
                 promoStatus: promoStatus
             }).then((success) => {
-                showToastWithGravity("Promoção cadastrada com sucesso!");
+                showToastWithGravity("Serviço cadastrado com sucesso!");
                 clearForm();
             }).catch((error) => {
                 alert(JSON.stringify(error));
@@ -120,7 +120,7 @@ export default function Promos() {
                 promoStatus,
                 description
             }).then((success) => {
-                showToastWithGravity("Promoção atualizada com sucesso!");
+                showToastWithGravity("Serviço atualizada com sucesso!");
                 clearForm();
             }).catch((error) => {
                 alert(JSON.stringify(error));
@@ -145,22 +145,22 @@ export default function Promos() {
 
     useEffect(() => {
         getPromos();
-    }, [])
+    }, []);
 
     return (
         <View style={styles.container}>
-            <Text style={styles.promosTitle}>Serviços</Text>
+            <Text style={styles.promosTitle}>Catálogo de Serviços</Text>
             <View style={{ width: '90%', height: 60, alignItems: "center", justifyContent: "center", flexDirection: "row", borderWidth: 1, borderRadius: 7.5, paddingLeft: 10, marginBottom: 25 }}>
                 <View style={{ width: '55%' }}>
-                    <TextInput value={searchTextPromo} placeholder="Buscar Promoção..." style={{ fontSize: 18 }} onChangeText={(searchTextPromo) => { setSearchTextPromo(searchTextPromo) }}></TextInput>
+                    <TextInput value={searchTextPromo} placeholder="Buscar Serviço..." style={{ fontSize: 18 }} onChangeText={(searchTextPromo) => { setSearchTextPromo(searchTextPromo); }}></TextInput>
                 </View>
-                <TouchableOpacity style={{ width: '15%', alignItems: "center" }} onPress={() => { searchPromo() }}>
+                <TouchableOpacity style={{ width: '15%', alignItems: "center" }} onPress={() => { searchPromo(); }}>
                     <Icon name="search-outline" size={40} color={"#000"}></Icon>
                 </TouchableOpacity>
-                <TouchableOpacity style={{ width: '15%', alignItems: "center" }} onPress={() => { clearFilteredPromos() }}>
+                <TouchableOpacity style={{ width: '15%', alignItems: "center" }} onPress={() => { clearFilteredPromos(); }}>
                     <Icon name="return-down-back-outline" size={40} color={"#000"}></Icon>
                 </TouchableOpacity>
-                <TouchableOpacity style={{ width: '15%', alignItems: "center" }} onPress={() => { setModalVisible(true) }}>
+                <TouchableOpacity style={{ width: '15%', alignItems: "center" }} onPress={() => { setModalVisible(true); }}>
                     <Icon name="add-outline" size={40} color={"#000"}></Icon>
                 </TouchableOpacity>
             </View>
@@ -179,7 +179,7 @@ export default function Promos() {
                         <Swipeable
                             renderRightActions={(progress, dragX) => (<RightActions progress={progress} dragX={dragX} promoUID={item.key}></RightActions>)}
                         >
-                            <TouchableOpacity style={styles.promosButton} onPress={() => { openSelectedPromo(item.key) }}>
+                            <TouchableOpacity style={styles.promosButton} onPress={() => { openSelectedPromo(item.key); }}>
                                 <Text style={[styles.usersText, { fontSize: 20, width: '70%' }]}>{item.title}</Text>
                                 <Text style={[styles.usersText, { color: "#428BCA", textAlign: "right", width: '30%' }]}>R$ {parseFloat(item.value).toFixed(2).toString().replace(".", ",")}</Text>
                             </TouchableOpacity>
@@ -199,13 +199,13 @@ export default function Promos() {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalHeader}>
-                        <TouchableOpacity style={{ width: '100%', alignItems: "center" }} onPress={() => { clearForm() }}>
+                        <TouchableOpacity style={{ width: '100%', alignItems: "center" }} onPress={() => { clearForm(); }}>
                             <Icon name="arrow-down-circle-outline" size={50} color={"#000"}></Icon>
                         </TouchableOpacity>
                         {selectedPromoUID.length > 0 ?
-                            (<Text style={{ fontSize: 25 }}>Editar Promoção</Text>)
+                            (<Text style={{ fontSize: 25 }}>Editar Serviço</Text>)
                             :
-                            (<Text style={{ fontSize: 25 }}>Nova Promoção</Text>)
+                            (<Text style={{ fontSize: 25 }}>Novo Serviço</Text>)
                         }
                     </View>
                     <View style={styles.modalBody}>
@@ -219,10 +219,10 @@ export default function Promos() {
                                 <Picker.Item label="Inativo" value="Inativo" />
                             </Picker>
                         </View>
-                        <TextInput value={title} placeholder="Título" style={styles.input} onChangeText={(title) => { setTitle(title) }}></TextInput>
-                        <TextInput value={value} placeholder="Valor" style={styles.input} keyboardType="numeric" onChangeText={(value) => { setValue(value) }}></TextInput>
-                        <TextInput value={description} placeholder="Descrição" style={[styles.input, { height: 150, textAlignVertical: "top" }]} onChangeText={(description) => { setDescription(description) }}></TextInput>
-                        <TouchableOpacity style={styles.saveButton} onPress={() => { savePromo() }}>
+                        <TextInput value={title} placeholder="Título" style={styles.input} onChangeText={(title) => { setTitle(title); }}></TextInput>
+                        <TextInput value={value} placeholder="Valor" style={styles.input} keyboardType="numeric" onChangeText={(value) => { setValue(value); }}></TextInput>
+                        <TextInput multiline value={description} placeholder="Descrição" style={[styles.input, { height: 150, textAlignVertical: "top" }]} onChangeText={(description) => { setDescription(description); }}></TextInput>
+                        <TouchableOpacity style={styles.saveButton} onPress={() => { savePromo(); }}>
                             <Text style={{ color: "#FFF", fontSize: 18 }}>Salvar</Text>
                         </TouchableOpacity>
                     </View>
@@ -240,8 +240,8 @@ export default function Promos() {
                 showConfirmButton={true}
                 cancelText="Não"
                 confirmText="Sim"
-                confirmButtonColor="#000"
-                cancelButtonColor="#DD6B55"
+                confirmButtonColor="#DD6B55"
+                cancelButtonColor="#000"
                 onCancelPressed={() => {
                     setAlertVisible(false);
                     setSelectedPromoUID("");
@@ -343,4 +343,4 @@ const styles = StyleSheet.create({
         backgroundColor: '#FF0000',
         justifyContent: "center"
     },
-})
+});

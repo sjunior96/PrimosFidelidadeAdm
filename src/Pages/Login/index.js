@@ -35,7 +35,7 @@ export default function Login() {
         firebase.auth().sendPasswordResetEmail(email)
             .then((success) => {
                 showToastWithGravity("Email de redefinição enviado!");
-            })
+            });
     }
 
     async function loginUser() {
@@ -64,7 +64,7 @@ export default function Login() {
                     .catch((error) => {
                         alert(error.code);
                     });
-            })
+            });
     }
 
     useEffect(() => {
@@ -83,7 +83,7 @@ export default function Login() {
                 useNativeDriver: false
             })
         ]).start();
-    }, [])
+    }, []);
 
     function keyboardDidShow() {
         Animated.parallel([
@@ -155,20 +155,20 @@ export default function Login() {
                             style={styles.input}
                             placeholder="Email"
                             autoCorrect={false}
-                            onChangeText={(email) => { setEmail(email) }}
+                            onChangeText={(email) => { setEmail(email); }}
                         />
 
                         <TextInput
                             style={styles.input}
                             placeholder="Senha"
                             autoCorrect={false}
-                            onChangeText={(password) => { setPassword(password) }}
+                            onChangeText={(password) => { setPassword(password); }}
                             secureTextEntry={true}
                         />
 
                         <TouchableOpacity
                             style={styles.btnSubmit}
-                            onPress={() => { loginUser() }}
+                            onPress={() => { loginUser(); }}
                         >
                             <Text style={styles.submitText}>Entrar</Text>
                         </TouchableOpacity>
@@ -181,7 +181,7 @@ export default function Login() {
                             style={styles.input}
                             placeholder="Email"
                             autoCorrect={false}
-                            onChangeText={(email) => { setEmail(email) }}
+                            onChangeText={(email) => { setEmail(email); }}
                         />
 
                         <TouchableOpacity style={styles.btnSubmit}>
@@ -244,4 +244,4 @@ const styles = StyleSheet.create({
     }
 
 
-})
+});

@@ -40,7 +40,7 @@ export default function Home() {
         });
 
         return (
-            <TouchableOpacity onPress={() => { deleteUser(userUID) }}>
+            <TouchableOpacity onPress={() => { deleteUser(userUID); }}>
                 <View style={styles.rightActionButton}>
                     <Icon name="trash" size={30} color={'#FFF'}></Icon>
                 </View>
@@ -54,7 +54,7 @@ export default function Home() {
             firebase.database().ref('users').child(userKey).child('stampsQuantity').set(newStampsQuantity)
                 .then((success) => {
                     //alert("Estrela concedida com sucesso!");
-                })
+                });
         }
         else {
             firebase.database().ref('users').child(userKey).child('giftsQuantity').set(selectedUser.giftsQuantity + 1);
@@ -80,13 +80,20 @@ export default function Home() {
         await firebase.database().ref('finance').child(months[new Date().getMonth()]).set(myMoney);
     }
 
-    async function removeGift(userKey) {
-        let newGiftsQuantity = selectedUser.giftsQuantity - 1;
-        firebase.database().ref('users').child(userKey).child('giftsQuantity').set(newGiftsQuantity)
+    async function addGiftRemovalRequest(userKey) {
+        firebase.database().ref("users").child(userKey).child("hasGiftRemovalRequest").set("true")
             .then((success) => {
-                //alert("Brinde resgatado com sucesso!");
-            })
+                alert("Foi adicionada uma solicitação de confirmação para o(a) cliente. Peça que ele(a) a confirme para retirar o brinde.");
+            });
     }
+
+    /*     async function removeGift(userKey) {
+            let newGiftsQuantity = selectedUser.giftsQuantity - 1;
+            firebase.database().ref('users').child(userKey).child('giftsQuantity').set(newGiftsQuantity)
+                .then((success) => {
+                    //alert("Brinde resgatado com sucesso!");
+                })
+        } */
 
     async function checkClientType() {
         let uid = firebase.auth().currentUser.uid;
@@ -112,10 +119,11 @@ export default function Home() {
                 key: snapshot.key,
                 name: snapshot.val().name,
                 email: snapshot.val().email,
+                hasGiftRemovalRequest: snapshot.val().hasGiftRemovalRequest,
                 stampsQuantity: snapshot.val().stampsQuantity,
                 giftsQuantity: snapshot.val().giftsQuantity,
                 clientType: snapshot.val().clientType
-            }
+            };
             setSelectedUser(list);
         });
         let newStamps = [];
@@ -123,7 +131,7 @@ export default function Home() {
             let list = {
                 key: index,
                 value: index
-            }
+            };
             newStamps.push(list);
             //setStamps(oldArray => [...oldArray, 0]);
         }
@@ -144,9 +152,9 @@ export default function Home() {
                     giftsQuantity: childItem.val().giftsQuantity,
                     stampsQuantity: childItem.val().stampsQuantity,
                     clientType: childItem.val().clientType
-                }
+                };
                 setUsers(oldArray => [...oldArray, list]);
-            })
+            });
         });
     }
 
@@ -163,7 +171,7 @@ export default function Home() {
         alert(userUID);
         await firebase.database().ref('users').child(userUID).remove()
             .then((success) => {
-                showToastWithGravity("Cliente excluído com sucesso!");
+                showToastWithGravity("Cliente excluído(a) com sucesso!");
             })
             .catch((error) => {
                 alert("Erro ao deletar cliente: " + JSON.stringify(error));
@@ -181,7 +189,7 @@ export default function Home() {
         setLoggedUserEmail(firebase.auth().currentUser.email);
         getActualMoney();
         //openSelectedProfile();
-    }, [])
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -191,12 +199,12 @@ export default function Home() {
             </View>
             <View style={{ width: '90%', height: 60, alignItems: "center", justifyContent: "center", flexDirection: "row", borderWidth: 1, borderRadius: 7.5, paddingLeft: 25, marginBottom: 25 }}>
                 <View style={{ width: '60%' }}>
-                    <TextInput value={searchUserText} placeholder="Buscar Cliente..." style={{ fontSize: 18 }} onChangeText={(searchUserText) => { setSearchUserText(searchUserText) }}></TextInput>
+                    <TextInput value={searchUserText} placeholder="Buscar Cliente..." style={{ fontSize: 18 }} onChangeText={(searchUserText) => { setSearchUserText(searchUserText); }}></TextInput>
                 </View>
-                <TouchableOpacity style={{ width: '20%', alignItems: "center" }} onPress={() => { searchUser() }}>
+                <TouchableOpacity style={{ width: '20%', alignItems: "center" }} onPress={() => { searchUser(); }}>
                     <Icon name="search-outline" size={40} color={"#000"}></Icon>
                 </TouchableOpacity>
-                <TouchableOpacity style={{ width: '20%', alignItems: "center" }} onPress={() => { clearFilteredUsers() }}>
+                <TouchableOpacity style={{ width: '20%', alignItems: "center" }} onPress={() => { clearFilteredUsers(); }}>
                     <Icon name="return-down-back-outline" size={40} color={"#000"}></Icon>
                 </TouchableOpacity>
             </View>
@@ -210,7 +218,7 @@ export default function Home() {
                         <Swipeable
                             renderRightActions={(progress, dragX) => (<RightActions progress={progress} dragX={dragX} userUID={item.key}></RightActions>)}
                         >
-                            <TouchableOpacity style={styles.usersButton} onPress={() => { openSelectedProfile(item.key) }}>
+                            <TouchableOpacity style={styles.usersButton} onPress={() => { openSelectedProfile(item.key); }}>
                                 <Text style={[styles.usersText]}>Cliente: {item.name}</Text>
                                 <Text style={[styles.usersText, { color: "#777" }]}>Email: {item.email}</Text>
                                 <Text style={[styles.usersText, { color: "#777" }]}>Carimbos: {item.stampsQuantity}</Text>
@@ -230,7 +238,7 @@ export default function Home() {
                 visible={modalVisible}
             >
                 <View style={styles.modalView}>
-                    <TouchableOpacity style={{ width: '100%', alignItems: "center", height: '10%' }} onPress={() => { setModalVisible(false) }}>
+                    <TouchableOpacity style={{ width: '100%', alignItems: "center", height: '10%' }} onPress={() => { setModalVisible(false); }}>
                         <Icon name="arrow-down-circle-outline" size={50}></Icon>
                     </TouchableOpacity>
                     <View style={{ padding: 15, height: '80%' }}>
@@ -253,32 +261,32 @@ export default function Home() {
                                 <Text style={[styles.selectedUserGiftsQuantity, styles.badge]}>{selectedUser.giftsQuantity}</Text>
                             </View>
                         </View>
-                            <FlatList
-                                contentContainerStyle={{ flexDirection: "row", flexWrap: "wrap", paddingTop: 25, justifyContent: "center" }}
-                                data={stamps}
-                                renderItem={({ item }) => (
-                                    // Componente que será renderizado, para cada dispositivo cadastrado
-                                    <>
-                                        {item.value > selectedUser.stampsQuantity ?
-                                            (
-                                                <View style={{ alignItems: "center", justifyContent: "center", width: 69, height: 69, backgroundColor: "#000", borderRadius: 100, marginRight: 1, marginBottom: 3, opacity: 0.2 }}>
-                                                    <Image style={{ width: 59, height: 59 }} source={require('../../assets/logo.png')}></Image>
-                                                </View>
-                                            )
-                                            :
-                                            (
-                                                <View style={{ alignItems: "center", justifyContent: "center", width: 69, height: 69, backgroundColor: "#000", borderRadius: 100, marginRight: 1, marginBottom: 3, }}>
-                                                    <Image style={{ width: 59, height: 59 }} source={require('../../assets/logo.png')}></Image>
-                                                </View>
-                                            )
+                        <FlatList
+                            contentContainerStyle={{ flexDirection: "row", flexWrap: "wrap", paddingTop: 25, justifyContent: "center" }}
+                            data={stamps}
+                            renderItem={({ item }) => (
+                                // Componente que será renderizado, para cada dispositivo cadastrado
+                                <>
+                                    {item.value > selectedUser.stampsQuantity ?
+                                        (
+                                            <View style={{ alignItems: "center", justifyContent: "center", width: 69, height: 69, backgroundColor: "#000", borderRadius: 100, marginRight: 1, marginBottom: 3, opacity: 0.2 }}>
+                                                <Image style={{ width: 59, height: 59 }} source={require('../../assets/logo.png')}></Image>
+                                            </View>
+                                        )
+                                        :
+                                        (
+                                            <View style={{ alignItems: "center", justifyContent: "center", width: 69, height: 69, backgroundColor: "#000", borderRadius: 100, marginRight: 1, marginBottom: 3, }}>
+                                                <Image style={{ width: 59, height: 59 }} source={require('../../assets/logo.png')}></Image>
+                                            </View>
+                                        )
 
-                                        }
-                                    </>
-                                )}
-                                keyExtractor={item => item.id}
-                            >
+                                    }
+                                </>
+                            )}
+                            keyExtractor={item => item.id}
+                        >
 
-                            </FlatList>
+                        </FlatList>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
                             <View style={{ backgroundColor: "#000", borderRadius: 100, height: 175, width: 175, alignItems: "center", justifyContent: "center", paddingTop: 10 }}>
                                 <Image style={{ width: 150, height: 150 }} source={require('../../assets/logo.png')}></Image>
@@ -287,10 +295,10 @@ export default function Home() {
                         </View>
                     </View>
                     <View style={{ height: '10%', width: '100%', backgroundColor: '#FFF', flexDirection: "row" }}>
-                        <TouchableOpacity style={{ width: '50%', padding: 15 }} onPress={() => { setAlertMessage("Tem certeza de que deseja dar um adesivo para o cliente " + selectedUser.name + "?"); setAlertVisible(true); }}>
+                        <TouchableOpacity style={{ width: '50%', padding: 15 }} onPress={() => { setAlertMessage("Tem certeza de que deseja dar um adesivo para o(a) cliente " + selectedUser.name + "?"); setAlertVisible(true); }}>
                             <Icon name="star" size={40} color={"#ffbf00"}></Icon>
                         </TouchableOpacity>
-                        <TouchableOpacity disabled={selectedUser.giftsQuantity > 0 ? false : true} style={{ width: '50%', alignItems: "flex-end", padding: 15 }} onPress={() => { setAlertMessage("Tem certeza de que deseja dar baixa em um brinde do cliente " + selectedUser.name + "?"); setAlertVisible(true); }}>
+                        <TouchableOpacity disabled={(selectedUser.giftsQuantity > 0 && selectedUser.hasGiftRemovalRequest === 'false') ? false : true} style={{ width: '50%', alignItems: "flex-end", padding: 15 }} onPress={() => { setAlertMessage("Tem certeza de que deseja dar baixa em um brinde do(a) cliente " + selectedUser.name + "? O(A) cliente precisará confirmar!"); setAlertVisible(true); }}>
                             <Icon name="download-sharp" size={40} color={"#d9534f"}></Icon>
                         </TouchableOpacity>
                     </View>
@@ -309,15 +317,15 @@ export default function Home() {
                 showConfirmButton={true}
                 cancelText="Não"
                 confirmText="Sim"
-                confirmButtonColor="#000"
-                cancelButtonColor="#DD6B55"
+                confirmButtonColor="#DD6B55"
+                cancelButtonColor="#000"
                 onCancelPressed={() => {
                     setAlertVisible(false);
                 }}
                 onConfirmPressed={() => {
-                    if (alertMessage == ("Tem certeza de que deseja dar baixa em um brinde do cliente " + selectedUser.name + "?")) {
+                    if (alertMessage == ("Tem certeza de que deseja dar baixa em um brinde do(a) cliente " + selectedUser.name + "?")) {
                         setAlertVisible(false);
-                        removeGift(selectedUser.key);
+                        addGiftRemovalRequest(selectedUser.key);
                     }
                     else {
                         setAlertVisible(false);
@@ -402,4 +410,4 @@ const styles = StyleSheet.create({
         backgroundColor: '#FF0000',
         justifyContent: "center"
     },
-})
+});
